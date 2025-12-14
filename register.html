@@ -1,21 +1,14 @@
 
-<script src="supabase.js"></script>
-<script>
-async function register() {
-  const supabase = await window.supabaseClient;
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>اختبار</title>
+</head>
+<body>
 
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+<h1>الصفحة شغالة</h1>
+<button onclick="alert('شغّال')">اضغط</button>
 
-  const { error } = await supabase.auth.signUp({
-    email,
-    password
-  });
-
-  if (error) {
-    alert(error.message);
-  } else {
-    alert("تم إنشاء الحساب");
-  }
-}
-</script>
+</body>
+</html>
