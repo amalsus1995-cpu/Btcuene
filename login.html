@@ -20,7 +20,12 @@
 <script>
   const supabaseUrl = "https://gpfxakuneeuafxgqbobs.supabase.co";
   const supabaseKey = "sb_publishable_N7Rxa6cF70kZh28q3J_aWg_Na_oapEO";
-  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+  // مهم: اسم مختلف
+  const supabaseClient = supabase.createClient(
+    supabaseUrl,
+    supabaseKey
+  );
 
   async function login() {
     const email = document.getElementById("email").value;
@@ -29,7 +34,7 @@
 
     msg.innerText = "جاري تسجيل الدخول...";
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabaseClient.auth.signInWithPassword({
       email,
       password
     });
@@ -44,8 +49,6 @@
     }
   }
 </script>
-<script>
-  alert("الصفحة اشتغلت");
-</script>
+
 </body>
 </html>
