@@ -4,39 +4,60 @@
 <head>
   <meta charset="UTF-8">
   <title>لوحة التحكم</title>
-  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-<header>
-  لوحة التحكم – بيتكوين كاش
-</header>
+<h2>لوحة التحكم</h2>
 
-<div class="container">
+<p><strong>الإيميل:</strong> <span id="email">...</span></p>
+<p><strong>النقاط:</strong> <span id="points">0</span></p>
 
-  <div class="card">
-    <h3>رصيدك الحالي</h3>
-    <div class="balance">0 نقطة</div>
-  </div>
+<hr>
 
-  <div class="card">
-    <h3>الاستثمار الحالي</h3>
-    <p>لا يوجد استثمار نشط</p>
-  </div>
+<button onclick="logout()">تسجيل الخروج</button>
 
-  <div class="card">
-    <button class="btn">➕ إيداع نقاط</button>
-    <button class="btn">➖ طلب سحب</button>
-  </div>
+<p id="msg"></p>
 
-</div>
+<script>
+  const supabaseUrl = "https://gpfxakuneeuafxgqbobs.supabase.co";
+  const supabaseKey = "sb_publishable_N7Rxa6cF70kZh28q3J_aWg_Na_oapEO";
 
-<div class="nav">
-  <a href="#">🏠 الرئيسية</a>
-  <a href="#">💰 إيداع</a>
-  <a href="#">📤 سحب</a>
-  <a href="#">👤 حسابي</a>
-</div>
+  const supabaseClient = supabase.createClient(
+    supabaseUrl,
+    supabaseKey
+  );
+
+  async function loadProfile() {
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+    if (!user) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    document.getElementById("email").innerText = user.email;
+
+    const { data, error } = await supabaseClient
+      .from("profiles")
+      .select("points")
+      .eq("user_id", user.id)
+      .single();
+
+    if (error) {
+      document.getElementById("msg").innerText = "خطأ بتحميل البيانات";
+    } else {
+      document.getElementById("points").innerText = data.points;
+    }
+  }
+
+  async function logout() {
+    await supabaseClient.auth.signOut();
+    window.location.href = "login.html";
+  }
+
+  loadProfile();
+</script>
 
 </body>
 </html>
