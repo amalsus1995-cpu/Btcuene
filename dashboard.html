@@ -1,12 +1,42 @@
 
 <!DOCTYPE html>
 <html lang="ar">
-<head><meta charset="UTF-8"><title>لوحة التحكم</title></head>
+<head>
+  <meta charset="UTF-8">
+  <title>لوحة التحكم</title>
+  <link rel="stylesheet" href="style.css">
+</head>
 <body>
-<h2>لوحة المستخدم</h2>
-<p>رصيدك: 100 نقطة</p>
-<p>استثمارك الحالي: 100 نقطة → 180 نقطة بعد 20 يوم</p>
-<a href="deposit.html">إيداع</a> |
-<a href="withdraw.html">سحب</a>
+
+<header>
+  لوحة التحكم – بيتكوين كاش
+</header>
+
+<div class="container">
+
+  <div class="card">
+    <h3>رصيدك الحالي</h3>
+    <div class="balance">0 نقطة</div>
+  </div>
+
+  <div class="card">
+    <h3>الاستثمار الحالي</h3>
+    <p>لا يوجد استثمار نشط</p>
+  </div>
+
+  <div class="card">
+    <button class="btn">➕ إيداع نقاط</button>
+    <button class="btn">➖ طلب سحب</button>
+  </div>
+
+</div>
+
+<div class="nav">
+  <a href="#">🏠 الرئيسية</a>
+  <a href="#">💰 إيداع</a>
+  <a href="#">📤 سحب</a>
+  <a href="#">👤 حسابي</a>
+</div>
+
 </body>
 </html>
