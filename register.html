@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>إنشاء حساب</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -12,6 +12,7 @@
 
 <input id="email" type="email" placeholder="البريد الإلكتروني"><br><br>
 <input id="password" type="password" placeholder="كلمة المرور"><br><br>
+
 <button onclick="register()">تسجيل</button>
 
 <p id="msg"></p>
@@ -19,25 +20,34 @@
 <script>
   const supabaseUrl = "https://gpfxakuneeuafxgqbobs.supabase.co";
   const supabaseKey = "sb_publishable_N7Rxa6cF70kZh28q3J_aWg_Na_oapEO";
-  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+  // نفس الحل تبع login
+  const supabaseClient = supabase.createClient(
+    supabaseUrl,
+    supabaseKey
+  );
 
   async function register() {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
+    const msg = document.getElementById("msg");
 
-    const { data, error } = await supabase.auth.signUp({
+    msg.innerText = "جاري إنشاء الحساب...";
+
+    const { data, error } = await supabaseClient.auth.signUp({
       email,
       password
     });
 
     if (error) {
-      document.getElementById("msg").innerText = error.message;
+      msg.innerText = "❌ " + error.message;
       return;
     }
 
     const user = data.user;
 
-    const { error: insertError } = await supabase
+    // إضافة صف في profiles
+    const { error: insertError } = await supabaseClient
       .from("profiles")
       .insert([{
         user_id: user.id,
@@ -46,9 +56,12 @@
       }]);
 
     if (insertError) {
-      document.getElementById("msg").innerText = insertError.message;
+      msg.innerText = "❌ " + insertError.message;
     } else {
-      document.getElementById("msg").innerText = "✅ تم إنشاء الحساب بنجاح";
+      msg.innerText = "✅ تم إنشاء الحساب بنجاح";
+      setTimeout(() => {
+        window.location.href = "login.html";
+      }, 800);
     }
   }
 </script>
