@@ -1,38 +1,21 @@
 
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-  <meta charset="UTF-8">
-  <title>إنشاء حساب</title>
-</head>
-<body>
-
-<h2>إنشاء حساب جديد</h2>
-
-<input id="email" placeholder="الإيميل"><br><br>
-<input id="password" type="password" placeholder="كلمة المرور (6 أحرف على الأقل)"><br><br>
-
-<button onclick="register()">إنشاء حساب</button>
-
 <script src="supabase.js"></script>
 <script>
 async function register() {
+  const supabase = await window.supabaseClient;
+
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
-  const { error } = await window.supabase.auth.signUp({
-    email: email,
-    password: password
+  const { error } = await supabase.auth.signUp({
+    email,
+    password
   });
 
   if (error) {
     alert(error.message);
   } else {
-    alert("تم إنشاء الحساب بنجاح");
-    window.location.href = "login.html";
+    alert("تم إنشاء الحساب");
   }
 }
 </script>
-
-</body>
-</html>
