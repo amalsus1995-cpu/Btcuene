@@ -1,8 +1,15 @@
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  const supabaseUrl = "https://gpfxakuneeuafxgqbobs.supabase.co";
-  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdwZnhha3VuZWV1YWZ4Z3Fib2JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU3MzE3ODEsImV4cCI6MjA4MTMwNzc4MX0.x2Mh3LwIg-8peEpJlif_1RcbrA-CyGa-xjtESaYKcXQ";
+window.supabaseClient = (function () {
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+  document.head.appendChild(script);
 
-  window.supabase = supabase.createClient(supabaseUrl, supabaseKey);
-</script>
+  return new Promise((resolve) => {
+    script.onload = () => {
+      const supabaseUrl = "https://gpfxakuneeuafxgqbobs.supabase.co";
+      const supabaseKey = "PUT_YOUR_ANON_KEY_HERE";
+      const client = window.supabase.createClient(supabaseUrl, supabaseKey);
+      resolve(client);
+    };
+  });
+})();
