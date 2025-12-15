@@ -1,57 +1,135 @@
+
 <!DOCTYPE html>
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
   <title>شحن النقاط</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Tahoma, Arial;
+      background: linear-gradient(135deg, #141e30, #243b55);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .box {
+      background: rgba(0,0,0,0.6);
+      width: 380px;
+      padding: 25px;
+      border-radius: 14px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.7);
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 15px;
+      color: #ffd700;
+    }
+
+    .wallet {
+      background: rgba(255,255,255,0.08);
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      word-break: break-all;
+      font-size: 14px;
+      color: #00ffcc;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 15px;
+    }
+
+    select {
+      background: #fff;
+      color: #000;
+    }
+
+    button {
+      background: #ffd700;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #ffea00;
+    }
+
+    .note {
+      font-size: 13px;
+      margin-top: 12px;
+      color: #ddd;
+    }
+
+    .back {
+      margin-top: 15px;
+      background: #c0392b;
+      color: #fff;
+    }
+  </style>
 </head>
 <body>
 
-<h2>شحن النقاط (USDT)</h2>
+<div class="box">
+  <h2>شحن النقاط</h2>
 
-<p>
-<strong>عنوان المحفظة (USDT TRC20):</strong><br>
-<span id="wallet">TPNoGerv1EMBSdrs9Yca93eCQUVsoNiRvq</span>
-</p>
+  <div>عنوان محفظة USDT (TRC20)</div>
+  <div class="wallet">
+    TPNoGerv1EMBSdrs9Yca93eCQUVsoNiRvq
+  </div>
 
-<hr>
+  <select id="amount">
+    <option value="100">100 نقطة = 100 USDT</option>
+    <option value="200">200 نقطة = 200 USDT</option>
+    <option value="500">500 نقطة = 500 USDT</option>
+    <option value="1000">1000 نقطة = 1000 USDT</option>
+  </select>
 
-<p>بعد التحويل، عبّي البيانات التالية:</p>
+  <button onclick="requestCharge()">تم التحويل</button>
 
-<input id="amount" type="number" placeholder="المبلغ (USDT)"><br><br>
-<input id="txid" type="text" placeholder="TXID (اختياري)"><br><br>
+  <div class="note">
+    ⚠️ بعد التحويل اضغط "تم التحويل"<br>
+    سيتم إضافة النقاط بعد المراجعة
+  </div>
 
-<button onclick="sendRequest()">إرسال طلب الشحن</button>
-
-<p id="msg"></p>
+  <button class="back" onclick="goBack()">رجوع للوحة التحكم</button>
+</div>
 
 <script>
   const supabaseUrl = "https://gpfxakuneeuafxgqbobs.supabase.co";
   const supabaseKey = "sb_publishable_N7Rxa6cF70kZh28q3J_aWg_Na_oapEO";
+  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-  const supabaseClient = supabase.createClient(
-    supabaseUrl,
-    supabaseKey
-  );
-
-  async function sendRequest() {
+  async function requestCharge() {
     const amount = document.getElementById("amount").value;
-    const txid = document.getElementById("txid").value;
-    const msg = document.getElementById("msg");
 
-    if (!amount || amount <= 0) {
-      msg.innerText = "❌ أدخل مبلغ صحيح";
-      return;
-    }
-
-    const { data: { user } } = await supabaseClient.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       window.location.href = "login.html";
       return;
     }
 
-    // حالياً فقط رسالة تأكيد (يدوي)
-    msg.innerText = "✅ تم إرسال طلب الشحن، بانتظار المراجعة";
+    alert(
+      "تم تسجيل طلب الشحن بقيمة " +
+      amount +
+      " نقطة.\nسيتم إضافة الرصيد بعد التأكيد."
+    );
+  }
+
+  function goBack() {
+    window.location.href = "dashboard.html";
   }
 </script>
 
