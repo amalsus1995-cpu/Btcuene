@@ -5,27 +5,94 @@
   <meta charset="UTF-8">
   <title>إنشاء حساب</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Tahoma, Arial;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .box {
+      background: rgba(0,0,0,0.55);
+      padding: 25px;
+      width: 320px;
+      border-radius: 12px;
+      box-shadow: 0 0 25px rgba(0,0,0,.6);
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #ffd700;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      font-size: 15px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #ffd700;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      color: #000;
+    }
+
+    button:hover {
+      background: #ffea00;
+    }
+
+    .msg {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    a {
+      color: #ffd700;
+      text-decoration: none;
+    }
+  </style>
 </head>
 <body>
 
-<h2>إنشاء حساب جديد</h2>
+<div class="box">
+  <h2>إنشاء حساب</h2>
 
-<input id="email" type="email" placeholder="البريد الإلكتروني"><br><br>
-<input id="password" type="password" placeholder="كلمة المرور"><br><br>
+  <input type="email" id="email" placeholder="الإيميل">
+  <input type="password" id="password" placeholder="كلمة المرور">
 
-<button onclick="register()">تسجيل</button>
+  <button onclick="register()">تسجيل</button>
 
-<p id="msg"></p>
+  <div class="msg" id="msg"></div>
+
+  <p style="margin-top:15px;">
+    عندك حساب؟
+    <a href="login.html">تسجيل دخول</a>
+  </p>
+</div>
 
 <script>
   const supabaseUrl = "https://gpfxakuneeuafxgqbobs.supabase.co";
   const supabaseKey = "sb_publishable_N7Rxa6cF70kZh28q3J_aWg_Na_oapEO";
 
-  // نفس الحل تبع login
-  const supabaseClient = supabase.createClient(
-    supabaseUrl,
-    supabaseKey
-  );
+  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
   async function register() {
     const email = document.getElementById("email").value;
@@ -34,35 +101,39 @@
 
     msg.innerText = "جاري إنشاء الحساب...";
 
-    const { data, error } = await supabaseClient.auth.signUp({
-      email,
-      password
+    // 1️⃣ إنشاء المستخدم
+    const { data, error } = await supabase.auth.signUp({
+      email: email,
+      password: password
     });
 
     if (error) {
-      msg.innerText = "❌ " + error.message;
+      msg.innerText = error.message;
       return;
     }
 
     const user = data.user;
 
-    // إضافة صف في profiles
-    const { error: insertError } = await supabaseClient
+    // 2️⃣ إضافة المستخدم لجدول profiles
+    const { error: profileError } = await supabase
       .from("profiles")
       .insert([{
+        id: user.id,
         user_id: user.id,
         email: email,
         points: 0
       }]);
 
-    if (insertError) {
-      msg.innerText = "❌ " + insertError.message;
-    } else {
-      msg.innerText = "✅ تم إنشاء الحساب بنجاح";
-      setTimeout(() => {
-        window.location.href = "login.html";
-      }, 800);
+    if (profileError) {
+      msg.innerText = "تم إنشاء الحساب لكن حدث خطأ بالملف الشخصي";
+      console.error(profileError);
+      return;
     }
+
+    msg.innerText = "تم إنشاء الحساب بنجاح ✔️";
+    setTimeout(() => {
+      window.location.href = "login.html";
+    }, 1500);
   }
 </script>
 
