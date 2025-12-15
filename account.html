@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>حسابي</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Supabase -->
+  <script src="https://unpkg.com/@supabase/supabase-js"></script>
+  <script src="supabase.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #020617, #0f172a);
+      color: white;
+      min-height: 100vh;
+    }
+
+    .container {
+      padding: 20px;
+      padding-bottom: 90px;
+    }
+
+    h1 {
+      font-size: 26px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: #020617;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .label {
+      font-size: 14px;
+      opacity: 0.8;
+      margin-bottom: 5px;
+    }
+
+    .value {
+      font-size: 16px;
+      margin-bottom: 15px;
+      word-break: break-all;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .btn-update {
+      background: gold;
+      color: black;
+    }
+
+    .btn-back {
+      background: #334155;
+      color: white;
+      margin-top: 10px;
+    }
+
+    /* Bottom menu */
+    .menu {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #020617;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      border-top: 1px solid #1e293b;
+    }
+
+    .menu a {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    .menu a span {
+      display: block;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>👤 حسابي</h1>
+
+    <!-- معلومات المستخدم -->
+    <div class="card">
+      <div class="label">البريد الإلكتروني</div>
+      <div class="value" id="email">...</div>
+
+      <div class="label">رقم حساب المستخدم</div>
+      <div class="value" id="userId">...</div>
+    </div>
+
+    <!-- تغيير كلمة المرور -->
+    <div class="card">
+      <h3>🔒 تغيير كلمة المرور</h3>
+
+      <input type="password" id="newPassword" placeholder="كلمة المرور الجديدة">
+      <button class="btn-update" onclick="changePassword()">
+        تحديث كلمة المرور
+      </button>
+    </div>
+
+    <button class="btn-back" onclick="window.location.href='dashboard.html'">
+      ⬅️ الرجوع إلى الرئيسية
+    </button>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <div class="menu">
+    <a href="dashboard.html">
+      <span>🏠</span>
+      الرئيسية
+    </a>
+
+    <a href="account.html">
+      <span>👤</span>
+      حسابي
+    </a>
+
+    <a href="ads.html">
+      <span>🎬</span>
+      الإعلانات
+    </a>
+
+    <a href="#" onclick="logout()">
+      <span>🚪</span>
+      خروج
+    </a>
+  </div>
+
+  <script>
+    async function loadAccount() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      document.getElementById("email").innerText = user.email;
+      document.getElementById("userId").innerText = user.id;
+    }
+
+    async function changePassword() {
+      const password = document.getElementById("newPassword").value;
+
+      if (password.length < 6) {
+        alert("كلمة المرور يجب أن تكون 6 أحرف على الأقل");
+        return;
+      }
+
+      const { error } = await supabase.auth.updateUser({
+        password: password
+      });
+
+      if (error) {
+        alert(error.message);
+      } else {
+        alert("✅ تم تحديث كلمة المرور بنجاح");
+        document.getElementById("newPassword").value = "";
+      }
+    }
+
+    async function logout() {
+      await supabase.auth.signOut();
+      window.location.href = "login.html";
+    }
+
+    loadAccount();
+  </script>
+
+</body>
+</html>
