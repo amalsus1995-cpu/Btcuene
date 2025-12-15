@@ -20,23 +20,24 @@
     }
 
     .dashboard {
-      background: rgba(0,0,0,0.6);
-      width: 380px;
+      background: rgba(0,0,0,0.65);
+      width: 390px;
       padding: 25px;
-      border-radius: 14px;
-      box-shadow: 0 0 30px rgba(0,0,0,0.7);
+      border-radius: 16px;
+      box-shadow: 0 0 35px rgba(0,0,0,0.7);
       text-align: center;
     }
 
     h2 {
       margin: 0 0 15px;
       color: #ffd700;
+      letter-spacing: 1px;
     }
 
     .info-box {
       background: rgba(255,255,255,0.06);
       padding: 15px;
-      border-radius: 10px;
+      border-radius: 12px;
       margin-bottom: 15px;
     }
 
@@ -49,26 +50,27 @@
     }
 
     .points {
-      font-size: 42px;
+      font-size: 44px;
       font-weight: bold;
       color: #ffd700;
       margin-top: 5px;
     }
 
     .buttons {
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 10px;
       margin-top: 15px;
     }
 
     button {
       padding: 12px;
-      border-radius: 8px;
+      border-radius: 10px;
       border: none;
       cursor: pointer;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: bold;
+      transition: 0.2s;
     }
 
     .btn-charge {
@@ -81,13 +83,20 @@
       color: #fff;
     }
 
+    .btn-withdraw {
+      background: #2980b9;
+      color: #fff;
+    }
+
     .btn-logout {
       background: #c0392b;
       color: #fff;
+      grid-column: span 2;
     }
 
     button:hover {
       opacity: 0.9;
+      transform: scale(0.98);
     }
 
     #msg {
@@ -115,6 +124,7 @@
   <div class="buttons">
     <button class="btn-charge" onclick="goCharge()">شحن النقاط</button>
     <button class="btn-ads" onclick="goAds()">مشاهدة الإعلانات</button>
+    <button class="btn-withdraw" onclick="goWithdraw()">سحب النقاط</button>
     <button class="btn-logout" onclick="logout()">تسجيل خروج</button>
   </div>
 
@@ -156,6 +166,10 @@
 
   function goAds() {
     window.location.href = "ads.html";
+  }
+
+  function goWithdraw() {
+    window.location.href = "withdraw.html";
   }
 
   async function logout() {
