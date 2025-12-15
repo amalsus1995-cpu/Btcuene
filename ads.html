@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>مشاهدة الإعلانات</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Tahoma, Arial;
+      background: linear-gradient(135deg, #141e30, #243b55);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .box {
+      background: rgba(0,0,0,0.6);
+      width: 380px;
+      padding: 25px;
+      border-radius: 14px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.7);
+      text-align: center;
+    }
+    h2 { color: #ffd700; margin-bottom: 10px; }
+    .counter {
+      font-size: 36px;
+      color: #ffd700;
+      margin: 15px 0;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      background: #ffd700;
+      color: #000;
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .back {
+      margin-top: 12px;
+      background: #c0392b;
+      color: #fff;
+    }
+    .note {
+      margin-top: 12px;
+      font-size: 13px;
+      color: #ddd;
+    }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h2>مشاهدة إعلان</h2>
+  <p>أكمل المشاهدة لتحصل على نقاط</p>
+
+  <div class="counter" id="counter">10</div>
+
+  <button id="startBtn" onclick="startAd()">ابدأ الإعلان</button>
+  <button class="back" onclick="goBack()">رجوع للوحة التحكم</button>
+
+  <div class="note" id="msg"></div>
+</div>
+
+<script>
+  const supabaseUrl = "https://gpfxakuneeuafxgqbobs.supabase.co";
+  const supabaseKey = "sb_publishable_N7Rxa6cF70kZh28q3J_aWg_Na_oapEO";
+  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+  let timer = 10;
+  let interval = null;
+
+  async function startAd() {
+    const btn = document.getElementById("startBtn");
+    const msg = document.getElementById("msg");
+    btn.disabled = true;
+    msg.innerText = "جاري مشاهدة الإعلان...";
+
+    interval = setInterval(async () => {
+      timer--;
+      document.getElementById("counter").innerText = timer;
+
+      if (timer <= 0) {
+        clearInterval(interval);
+        msg.innerText = "تمت المشاهدة، يتم إضافة النقاط...";
+
+        // نقاط الإعلان
+        const adPoints = 10;
+        const userShare = Math.floor(adPoints * 0.8); // 80%
+
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          window.location.href = "login.html";
+          return;
+        }
+
+        // جلب الرصيد الحالي
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("points")
+          .eq("user_id", user.id)
+          .single();
+
+        if (error) {
+          msg.innerText = "خطأ بتحميل الرصيد";
+          return;
+        }
+
+        const newPoints = data.points + userShare;
+
+        // تحديث الرصيد
+        const { error: updateError } = await supabase
+          .from("profiles")
+          .update({ points: newPoints })
+          .eq("user_id", user.id);
+
+        if (updateError) {
+          msg.innerText = "خطأ بإضافة النقاط";
+        } else {
+          msg.innerText = `✅ حصلت على ${userShare} نقاط`;
+        }
+
+        // إعادة الضبط
+        timer = 10;
+        document.getElementById("counter").innerText = timer;
+        btn.disabled = false;
+      }
+    }, 1000);
+  }
+
+  function goBack() {
+    window.location.href = "dashboard.html";
+  }
+</script>
+
+</body>
+</html>
