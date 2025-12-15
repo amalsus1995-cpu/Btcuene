@@ -15,13 +15,13 @@
       color: #fff;
       min-height: 100vh;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
     }
 
     .dashboard {
       background: rgba(0,0,0,0.6);
-      width: 360px;
+      width: 380px;
       padding: 25px;
       border-radius: 14px;
       box-shadow: 0 0 30px rgba(0,0,0,0.7);
@@ -34,7 +34,7 @@
     }
 
     .info-box {
-      background: rgba(255,255,255,0.05);
+      background: rgba(255,255,255,0.06);
       padding: 15px;
       border-radius: 10px;
       margin-bottom: 15px;
@@ -43,7 +43,7 @@
     .info-box span {
       display: block;
       margin-top: 6px;
-      font-size: 15px;
+      font-size: 14px;
       color: #ddd;
       word-break: break-all;
     }
@@ -57,12 +57,12 @@
 
     .buttons {
       display: flex;
+      flex-direction: column;
       gap: 10px;
-      margin-top: 20px;
+      margin-top: 15px;
     }
 
     button {
-      flex: 1;
       padding: 12px;
       border-radius: 8px;
       border: none;
@@ -71,22 +71,29 @@
       font-weight: bold;
     }
 
+    .btn-charge {
+      background: linear-gradient(135deg, #f7971e, #ffd200);
+      color: #000;
+    }
+
+    .btn-ads {
+      background: #27ae60;
+      color: #fff;
+    }
+
     .btn-logout {
       background: #c0392b;
       color: #fff;
     }
 
-    .btn-logout:hover {
-      background: #e74c3c;
+    button:hover {
+      opacity: 0.9;
     }
 
-    .btn-refresh {
-      background: #ffd700;
-      color: #000;
-    }
-
-    .btn-refresh:hover {
-      background: #ffea00;
+    #msg {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #ffdddd;
     }
   </style>
 </head>
@@ -96,28 +103,30 @@
   <h2>لوحة التحكم</h2>
 
   <div class="info-box">
-    البريد الإلكتروني:
+    البريد الإلكتروني
     <span id="email">...</span>
   </div>
 
   <div class="info-box">
-    النقاط الحالية
+    رصيد النقاط
     <div class="points" id="points">0</div>
   </div>
 
   <div class="buttons">
-    <button class="btn-refresh" onclick="loadProfile()">تحديث</button>
+    <button class="btn-charge" onclick="goCharge()">شحن النقاط</button>
+    <button class="btn-ads" onclick="goAds()">مشاهدة الإعلانات</button>
     <button class="btn-logout" onclick="logout()">تسجيل خروج</button>
   </div>
+
+  <div id="msg"></div>
 </div>
 
 <script>
   const supabaseUrl = "https://gpfxakuneeuafxgqbobs.supabase.co";
   const supabaseKey = "sb_publishable_N7Rxa6cF70kZh28q3J_aWg_Na_oapEO";
-
   const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-  async function loadProfile() {
+  async function loadDashboard() {
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -134,11 +143,19 @@
       .single();
 
     if (error) {
-      console.error(error);
+      document.getElementById("msg").innerText = "خطأ بتحميل الرصيد";
       return;
     }
 
     document.getElementById("points").innerText = data.points;
+  }
+
+  function goCharge() {
+    window.location.href = "charge.html";
+  }
+
+  function goAds() {
+    window.location.href = "ads.html";
   }
 
   async function logout() {
@@ -146,7 +163,7 @@
     window.location.href = "login.html";
   }
 
-  loadProfile();
+  loadDashboard();
 </script>
 
 </body>
