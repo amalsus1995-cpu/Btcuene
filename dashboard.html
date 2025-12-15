@@ -10,44 +10,41 @@
     body {
       margin: 0;
       padding: 0;
-      font-family: "Segoe UI", Tahoma, Arial;
+      font-family: Tahoma, Arial;
       background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
       color: #fff;
       min-height: 100vh;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
     }
 
     .dashboard {
-      background: rgba(0, 0, 0, 0.55);
-      width: 100%;
-      max-width: 420px;
-      border-radius: 16px;
+      background: rgba(0,0,0,0.6);
+      width: 360px;
       padding: 25px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+      border-radius: 14px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.7);
+      text-align: center;
     }
 
-    .dashboard h2 {
-      text-align: center;
-      margin-bottom: 20px;
+    h2 {
+      margin: 0 0 15px;
       color: #ffd700;
-      letter-spacing: 1px;
     }
 
     .info-box {
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
       padding: 15px;
+      border-radius: 10px;
       margin-bottom: 15px;
-      text-align: center;
     }
 
     .info-box span {
       display: block;
-      margin-top: 8px;
-      font-size: 18px;
-      color: #ffd700;
+      margin-top: 6px;
+      font-size: 15px;
+      color: #ddd;
       word-break: break-all;
     }
 
@@ -67,37 +64,29 @@
     button {
       flex: 1;
       padding: 12px;
-      border-radius: 10px;
+      border-radius: 8px;
       border: none;
-      font-size: 14px;
       cursor: pointer;
-      transition: 0.3s;
-    }
-
-    .charge-btn {
-      background: linear-gradient(135deg, #f7971e, #ffd200);
-      color: #000;
+      font-size: 15px;
       font-weight: bold;
     }
 
-    .charge-btn:hover {
-      opacity: 0.85;
-    }
-
-    .logout-btn {
+    .btn-logout {
       background: #c0392b;
       color: #fff;
     }
 
-    .logout-btn:hover {
+    .btn-logout:hover {
       background: #e74c3c;
     }
 
-    #msg {
-      text-align: center;
-      margin-top: 15px;
-      font-size: 14px;
-      color: #ffcccc;
+    .btn-refresh {
+      background: #ffd700;
+      color: #000;
+    }
+
+    .btn-refresh:hover {
+      background: #ffea00;
     }
   </style>
 </head>
@@ -107,34 +96,29 @@
   <h2>لوحة التحكم</h2>
 
   <div class="info-box">
-    البريد الإلكتروني
+    البريد الإلكتروني:
     <span id="email">...</span>
   </div>
 
   <div class="info-box">
-    رصيد النقاط
+    النقاط الحالية
     <div class="points" id="points">0</div>
   </div>
 
   <div class="buttons">
-    <button class="charge-btn" onclick="goCharge()">شحن النقاط</button>
-    <button class="logout-btn" onclick="logout()">خروج</button>
+    <button class="btn-refresh" onclick="loadProfile()">تحديث</button>
+    <button class="btn-logout" onclick="logout()">تسجيل خروج</button>
   </div>
-
-  <p id="msg"></p>
 </div>
 
 <script>
   const supabaseUrl = "https://gpfxakuneeuafxgqbobs.supabase.co";
   const supabaseKey = "sb_publishable_N7Rxa6cF70kZh28q3J_aWg_Na_oapEO";
 
-  const supabaseClient = supabase.createClient(
-    supabaseUrl,
-    supabaseKey
-  );
+  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-  async function loadDashboard() {
-    const { data: { user } } = await supabaseClient.auth.getUser();
+  async function loadProfile() {
+    const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
       window.location.href = "login.html";
@@ -143,29 +127,26 @@
 
     document.getElementById("email").innerText = user.email;
 
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from("profiles")
       .select("points")
       .eq("user_id", user.id)
       .single();
 
     if (error) {
-      document.getElementById("msg").innerText = "خطأ بتحميل الرصيد";
-    } else {
-      document.getElementById("points").innerText = data.points;
+      console.error(error);
+      return;
     }
-  }
 
-  function goCharge() {
-    window.location.href = "charge.html";
+    document.getElementById("points").innerText = data.points;
   }
 
   async function logout() {
-    await supabaseClient.auth.signOut();
+    await supabase.auth.signOut();
     window.location.href = "login.html";
   }
 
-  loadDashboard();
+  loadProfile();
 </script>
 
 </body>
